@@ -1,5 +1,9 @@
+import numdifftools as nd
+import numpy as np
+
+
 def fx(x):
-    '''
+    """
     The objective function.
 
     Inputs:
@@ -7,12 +11,12 @@ def fx(x):
 
     Outputs:
         Returns the function value evaluated at x.
-    '''
-    # return x**2
-    return ((x**4)/4) - (x**3) - x
+    """
+    return ((x**4) / 4) - (x**3) - x
+
 
 def derivative(x, fun, eps=1e-5):
-    '''
+    """
     Returns the derivative of the objective function.
 
     Inputs:
@@ -22,11 +26,12 @@ def derivative(x, fun, eps=1e-5):
 
     Outputs:
         Returns the derivative value evaluated at x.
-    '''
-    return (fun(x+eps) - fun(x)) / eps
+    """
+    return (fun(x + eps) - fun(x)) / eps
+
 
 def s_derivative(x, fun, eps=1e-3):
-    '''
+    """
     Returns the second derivative of the objective function.
 
     Inputs:
@@ -36,11 +41,12 @@ def s_derivative(x, fun, eps=1e-3):
 
     Outputs:
         Returns the second derivative value evaluated at x.
-    '''
-    return (derivative(x+eps, fun) - derivative(x, fun)) / eps
+    """
+    return (derivative(x + eps, fun) - derivative(x, fun)) / eps
+
 
 def optimize(x0, fun, max_iters=50, tol=1e-6):
-    '''
+    """
     Finds the minimum of a given objective function
 
     Inputs:
@@ -51,14 +57,16 @@ def optimize(x0, fun, max_iters=50, tol=1e-6):
 
     Outputs:
         Returns the minimum value of the objective function.
-    '''
+    """
     x_prev = x0
     for i in range(max_iters):
         g = derivative(x_prev, fun)
         h = s_derivative(x_prev, fun)
-        x = x_prev - g/h
+        x = x_prev - g / h
         if x > 1e5:
-           raise RuntimeError(f"At iteration {i}, optimization appears to be diverging")
+            raise RuntimeError(
+                f"At iteration {i}, optimization appears to be diverging"
+            )
 
         if abs(x - x_prev) < tol:
             break
@@ -69,15 +77,12 @@ def optimize(x0, fun, max_iters=50, tol=1e-6):
 
 
 # Multivariate Newton's Method
-import numpy as np
-import numdifftools as nd
-
 def mfunction(x):
     return sum(x**2)
 
 
 def multivariate_optimize(x0, fun, max_iters=50, tol=1e-6):
-    '''
+    """
     Finds the minimum of a given multivariate objective function
 
     Inputs:
@@ -88,7 +93,7 @@ def multivariate_optimize(x0, fun, max_iters=50, tol=1e-6):
 
     Outputs:
         Returns the minimum value of the multivariate objective function.
-    '''
+    """
 
     x_prev = x0
     for i in range(max_iters):
@@ -97,11 +102,12 @@ def multivariate_optimize(x0, fun, max_iters=50, tol=1e-6):
 
         x = x_prev - np.linalg.inv(h) @ g
 
-        if (np.linalg.norm(x - x_prev) < tol):
+        if np.linalg.norm(x - x_prev) < tol:
             break
 
         x_prev = x
 
     return x
 
-print(multivariate_optimize([3,2,4], mfunction))
+
+print(multivariate_optimize([3, 2, 4], mfunction))
