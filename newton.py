@@ -70,9 +70,9 @@ def optimize(x0, fun, max_iters=50, tol=1e-6):
 
 # Multivariate Newton's Method
 import numpy as np
-from scipy.differentiate import derivative, hessian
+import numdifftools as nd
 
-def mfx(x):
+def mfunction(x):
     return sum(x**2)
 
 
@@ -92,16 +92,16 @@ def multivariate_optimize(x0, fun, max_iters=50, tol=1e-6):
 
     x_prev = x0
     for i in range(max_iters):
-        g = derivative(fun, x_prev)
-        h = hessian(fun, x_prev)
+        g = nd.Gradient(fun)(x_prev)
+        h = nd.Hessian(fun)(x_prev)
 
-        x = x_prev - np.linalg.inv(h) * g
+        x = x_prev - np.linalg.inv(h) @ g
 
-        if (abs(x - x_prev) < tol):
+        if (np.linalg.norm(x - x_prev) < tol):
             break
 
         x_prev = x
 
     return x
 
-print(multivariate_optimize([3,2,4], mfx))
+print(multivariate_optimize([3,2,4], mfunction))
