@@ -50,7 +50,7 @@ def optimize(x0, fun, max_iters=50, tol=1e-6):
         eps:       small value for derivation calculations (float)
 
     Outputs:
-        Returns the second derivative value evaluated at x.
+        Returns the minimum value of the objective function.
     '''
     x_prev = x0
     for i in range(max_iters):
@@ -66,3 +66,42 @@ def optimize(x0, fun, max_iters=50, tol=1e-6):
         x_prev = x
 
     return x
+
+
+# Multivariate Newton's Method
+import numpy as np
+from scipy.differentiate import derivative, hessian
+
+def mfx(x):
+    return sum(x**2)
+
+
+def multivariate_optimize(x0, fun, max_iters=50, tol=1e-6):
+    '''
+    Finds the minimum of a given multivariate objective function
+
+    Inputs:
+        x0:        the starting value for minimization (float)
+        fun:       the function for which the minimum is calculated (func)
+        max_iters: maximum number of iterations to avoid infinite looping (int)
+        eps:       small value for derivation calculations (float)
+
+    Outputs:
+        Returns the minimum value of the multivariate objective function.
+    '''
+
+    x_prev = x0
+    for i in range(max_iters):
+        g = derivative(fun, x_prev)
+        h = hessian(fun, x_prev)
+
+        x = x_prev - np.linalg.inv(h) * g
+
+        if (abs(x - x_prev) < tol):
+            break
+
+        x_prev = x
+
+    return x
+
+print(multivariate_optimize([3,2,4], mfx))
